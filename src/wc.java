@@ -14,16 +14,17 @@ public class wc {
         int totchar=0;
         int totcount=0;
         int totword=0;
-        boolean printl=false;
-        boolean printw=false;
-        boolean printc=false;
+        //boolean printl=false;
+        //boolean printw=false;
+        //boolean printc=false;
         boolean everything=false;
+        ArrayList<Boolean> printer=new ArrayList<>();
         String fileName="";
         int siz=args.length;
         if (args.length==0) {//nothing in command line
             System.out.println("0 0 0 ");
         }else if(args[0].equals("wc")) {
-            ArrayList<Boolean> printer = instructions(args, siz,everything);
+            printer = instructions(args, siz,everything);
 
             for (int i = 0; i < args.length; i++) {//at least one thing in command line
                 try {
@@ -40,22 +41,32 @@ public class wc {
                     }
                     buff.close();
                 } catch (FileNotFoundException e) {
-                    if(!fileName.equals("wc")) {
-                        System.out.println("Cannot open file");
-                    }
+                    //if(!fileName.equals("wc")) {
+                        //System.out.println("Cannot open file"); might not even be needed
+                    //}
                 } catch (IOException e) {
                     System.out.println("error reading file");
                 }
                 if(printer.get(0)) {
-                    System.out.print("Lines:" + count + "  ");
+                    if (count != 0) {
+                        System.out.print(count + "  ");
+                    }
                 }
                 if(printer.get(1)) {
-                    System.out.print("Words:" + wordz + "  ");
+                    if (wordz != 0) {
+                        System.out.print(wordz + "  ");
+                    }
                 }
                 if(printer.get(2)) {
-                    System.out.print("Characters:" + charz + "  ");
+                    if(charz!=0) {
+                        System.out.print(charz + "  ");
+                    }
                 }
-                System.out.print(fileName);
+                if(printer.get(0)||printer.get(1)||printer.get(2)) {
+                    if(count!=0) {
+                        System.out.print(fileName);
+                    }
+                }
                 System.out.println(" ");
                 totchar = totchar + charz;
                 totcount = totcount + count;
@@ -66,10 +77,18 @@ public class wc {
                 tic++;
             }
         }
-        System.out.print("Lines:"+ totcount+"  ");
-        System.out.print("Words:"+totword+"  ");
-        System.out.print("Characters:"+totchar+"  ");
-        System.out.print("Total");
+        if(printer.get(0)) {
+            System.out.print(totcount + "  ");
+        }
+        if(printer.get(1)) {
+            System.out.print(totword + "  ");
+        }
+        if (printer.get(2)) {
+            System.out.print(totchar + "  ");
+        }
+        if(printer.get(0)||printer.get(1)||printer.get(2)) {
+            System.out.print("Total");
+        }
     }
     public static ArrayList<Boolean> instructions(String[]a,int inst,boolean e){
         ArrayList<Boolean> rets=new ArrayList<>();
@@ -82,7 +101,7 @@ public class wc {
                     System.out.println("wc -c <filename> will print the character count");
                     System.out.println("wc -w <filename> will print the word count");
                     System.out.println("wc <filename> will print all of the above");
-            }else if(a[2].charAt(0)!='-') {
+            }else if(a[1].charAt(0)!='-') {
                 e = true;
             }
 
