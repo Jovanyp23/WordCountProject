@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class wc {
     public static void main(String [] args){
@@ -13,45 +14,99 @@ public class wc {
         int totchar=0;
         int totcount=0;
         int totword=0;
+        boolean printl=false;
+        boolean printw=false;
+        boolean printc=false;
+        boolean everything=false;
         String fileName="";
+        int siz=args.length;
         if (args.length==0) {//nothing in command line
             System.out.println("0 0 0 ");
-        }else
-        for(int i=0; i<args.length;i++) {//at least one thing in command line
-            try {
+        }else if(args[0].equals("wc")) {
+            ArrayList<Boolean> printer = instructions(args, siz,everything);
 
-                fileName=args[tic];
-                FileReader reading = new FileReader(fileName);
-                BufferedReader buff = new BufferedReader(reading);
-                while ((line = buff.readLine()) != null) {
-                    //System.out.println(line); used this to test
-                    charz = charz + line.length();
-                    wordz = wordz + line.split("\\s+").length;
-                    //System.out.println(line.split("\\s+").length);
-                    count++;
+            for (int i = 0; i < args.length; i++) {//at least one thing in command line
+                try {
+
+                    fileName = args[tic];
+                    FileReader reading = new FileReader(fileName);
+                    BufferedReader buff = new BufferedReader(reading);
+                    while ((line = buff.readLine()) != null) {
+                        //System.out.println(line); used this to test
+                        charz = charz + line.length();
+                        wordz = wordz + line.split("\\s+").length;
+                        //System.out.println(line.split("\\s+").length);
+                        count++;
+                    }
+                    buff.close();
+                } catch (FileNotFoundException e) {
+                    if(!fileName.equals("wc")) {
+                        System.out.println("Cannot open file");
+                    }
+                } catch (IOException e) {
+                    System.out.println("error reading file");
                 }
-                buff.close();
-            } catch (FileNotFoundException e) {
-                System.out.println("Cannot open file");
-            } catch (IOException e) {
-                System.out.println("error reading file");
+                if(printer.get(0)) {
+                    System.out.print("Lines:" + count + "  ");
+                }
+                if(printer.get(1)) {
+                    System.out.print("Words:" + wordz + "  ");
+                }
+                if(printer.get(2)) {
+                    System.out.print("Characters:" + charz + "  ");
+                }
+                System.out.print(fileName);
+                System.out.println(" ");
+                totchar = totchar + charz;
+                totcount = totcount + count;
+                totword = totword + wordz;
+                charz = 0;
+                count = 0;
+                wordz = 0;
+                tic++;
             }
-            System.out.print("Lines:" + count+"  ");
-            System.out.print("Words:" + wordz+"  ");
-            System.out.print("Characters:" + charz+"  ");
-            System.out.print(fileName);
-            System.out.println(" ");
-            totchar=totchar+charz;
-            totcount=totcount+count;
-            totword=totword+wordz;
-            charz=0;
-            count=0;
-            wordz=0;
-            tic++;
         }
         System.out.print("Lines:"+ totcount+"  ");
         System.out.print("Words:"+totword+"  ");
         System.out.print("Characters:"+totchar+"  ");
         System.out.print("Total");
     }
-}
+    public static ArrayList<Boolean> instructions(String[]a,int inst,boolean e){
+        ArrayList<Boolean> rets=new ArrayList<>();
+        rets.add(false);
+        rets.add(false);
+        rets.add(false);
+            if(inst==1){
+                    System.out.println("wc will print instructions for how to use wc ");
+                    System.out.println("wc -l <filename> will print the line count of a file");
+                    System.out.println("wc -c <filename> will print the character count");
+                    System.out.println("wc -w <filename> will print the word count");
+                    System.out.println("wc <filename> will print all of the above");
+            }else if(a[2].charAt(0)!='-') {
+                e = true;
+            }
+
+            for(int i=1; i<inst-1;i++){
+                char c=a[i].charAt(0);
+                if(c=='-'){
+                    if(a[i].contains("l")){
+                        rets.set(0,true);
+                    }
+                    if(a[i].contains("w")){
+                        rets.set(1,true);
+                    }
+                    if(a[i].contains("c")){
+                        rets.set(2,true);
+                    }
+                }
+            }
+            if(e){
+                rets.set(0,true);
+                rets.set(1,true);
+                rets.set(2,true);
+            }
+        return rets;
+            }
+
+    }
+
