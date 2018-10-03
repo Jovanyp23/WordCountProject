@@ -4,7 +4,22 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Metrics {
+
+ class Metrics {
+    @picocli.CommandLine.Option(names={"-l","--lines"})
+            ArrayList<String> lines;
+     @picocli.CommandLine.Option(names={"-w","--words"})
+             ArrayList<String> words;
+     @picocli.CommandLine.Option(names={"-c","--characters"})
+             ArrayList<String> characterss;
+     @picocli.CommandLine.Option(names={"-s","--sourcelines"})
+             ArrayList<String> sourcelines;
+     @picocli.CommandLine.Option(names={"-C","--lines"})
+             ArrayList<String> commentlines;
+     @picocli.CommandLine.Option(names={"-h","--help"})
+             ArrayList<String> help;
+    @picocli.CommandLine.Parameters
+            ArrayList<String> positional;
     public static void main(String [] args){
         int tic=0;
         String line=null;
