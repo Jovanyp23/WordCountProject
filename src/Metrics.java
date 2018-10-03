@@ -5,21 +5,27 @@ import java.util.ArrayList;
 
  class Metrics {
     @picocli.CommandLine.Option(names={"-l","--lines"})
-            ArrayList<String> lines;
+    static
+    ArrayList<String> lines;
      @picocli.CommandLine.Option(names={"-w","--words"})
-             ArrayList<String> words;
+     static
+     ArrayList<String> words;
      @picocli.CommandLine.Option(names={"-c","--characters"})
-             ArrayList<String> characterss;
+     static
+     ArrayList<String> characters;
      @picocli.CommandLine.Option(names={"-s","--sourcelines"})
-             ArrayList<String> sourcelines;
+     static
+     ArrayList<String> sourcelines;
      @picocli.CommandLine.Option(names={"-C","--lines"})
-             ArrayList<String> commentlines;
+     static
+     ArrayList<String> commentlines;
      @picocli.CommandLine.Option(names={"-h","--help"})
-             ArrayList<String> help;
+     static
+     ArrayList<String> help;
     @picocli.CommandLine.Parameters
             ArrayList<String> positional;
-    public static void main(String [] args){
-        boolean headerYes=false;
+    public static void main(String [] args){//change instruction method to just print instructions, fill arrays with something if everything is printed
+        boolean headerYes=false;            //make sloc and com reader,keep tallies of sloc and com and their totals
         boolean jc=false;
         int tic=0;
         String line=null;
@@ -29,18 +35,17 @@ import java.util.ArrayList;
         int totchar=0;
         int totcount=0;
         int totword=0;
-        //boolean printl=false;
-        //boolean printw=false;
-        //boolean printc=false;
+        boolean wasRead=false;
         boolean everything=false;
         ArrayList<Boolean> printer=new ArrayList<>();
         String fileName="";
         int siz=args.length;
         if (args.length==0) {//nothing in command line
             System.out.println("0 0 0 ");
-        }else if(args[0].equals("wc")) {
-            printer = instructions(args, siz,everything);
-
+        }
+        else if(help!=null){
+            //print out the instructions
+        } else if(help==null) {
             for (int i = 0; i < args.length; i++) {//at least one thing in command line
                 try {
 
@@ -59,22 +64,38 @@ import java.util.ArrayList;
                 } catch (Exception e) {
                     System.out.println("error reading file");
                 }
-                if(printer.get(0)) {
+                headerPrint(headerYes,jc,lines,words,characters,sourcelines,commentlines);
+                if(lines!=null) {
                     if (count != 0) {
+                        wasRead=true;
                         System.out.print(count + "  ");
                     }
                 }
-                if(printer.get(1)) {
+                if(words!=null) {
                     if (wordz != 0) {
+                        wasRead=true;
                         System.out.print(wordz + "  ");
                     }
                 }
-                if(printer.get(2)) {
+                if(characters!=null) {
                     if(charz!=0) {
+                        wasRead=true;
                         System.out.print(charz + "  ");
                     }
                 }
-                if(printer.get(0)||printer.get(1)||printer.get(2)) {
+                if(sourcelines!=null) {//placeholder for sourcelines counter
+                    if(charz!=0) {
+                        wasRead=true;
+                        System.out.print(charz + "  ");
+                    }
+                }
+                if(commentlines!=null) {//placeholder for commentlines counter
+                    if(charz!=0) {
+                        wasRead=true;
+                        System.out.print(charz + "  ");
+                    }
+                }
+                if(wasRead) {
                     if(count!=0) {
                         System.out.print(fileName);
                     }
@@ -89,16 +110,22 @@ import java.util.ArrayList;
                 tic++;
             }
         }
-        if(printer.get(0)) {
+        if(lines!=null) {
             System.out.print(totcount + "  ");
         }
-        if(printer.get(1)) {
+        if(words!=null) {
             System.out.print(totword + "  ");
         }
-        if (printer.get(2)) {
+        if (characters!=null) {
             System.out.print(totchar + "  ");
         }
-        if(printer.get(0)||printer.get(1)||printer.get(2)) {
+        if (sourcelines!=null) {//placeholder for tot sourcelines
+            System.out.print(totchar + "  ");
+        }
+        if (commentlines!=null) {//placeholder for tot commentlines
+            System.out.print(totchar + "  ");
+        }
+        if(wasRead) {
             System.out.print("Total");
         }
     }
