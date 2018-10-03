@@ -25,7 +25,7 @@ import java.util.ArrayList;
     @picocli.CommandLine.Parameters
             ArrayList<String> positional;
     public static void main(String [] args){//change instruction method to just print instructions, fill arrays with something if everything is printed
-        boolean headerYes=false;            //make sloc and com reader,keep tallies of sloc and com and their totals
+        boolean headerYes=false;            //make sloc and com reader,keep tallies of sloc and com and their totals, change where the read lines are being put in from
         boolean jc=false;
         int tic=0;
         String line=null;
@@ -129,41 +129,42 @@ import java.util.ArrayList;
             System.out.print("Total");
         }
     }
-    public static ArrayList<Boolean> instructions(String[]a,int inst,boolean e){
-        ArrayList<Boolean> rets=new ArrayList<>();
-        rets.add(false);
-        rets.add(false);
-        rets.add(false);
-            if(inst==1){
-                    System.out.println("wc will print instructions for how to use wc ");
-                    System.out.println("wc -l <filename> will print the line count of a file");
-                    System.out.println("wc -c <filename> will print the character count");
-                    System.out.println("wc -w <filename> will print the word count");
-                    System.out.println("wc <filename> will print all of the above");
-            }else if(a[1].charAt(0)!='-') {
-                e = true;
-            }
+    public static void instructions(String[]a,int inst,boolean e){
+       // ArrayList<Boolean> rets=new ArrayList<>();
+        //rets.add(false);
+        //rets.add(false);
+        //rets.add(false);
+           // if(inst==1){
+                    System.out.println("-h or --help will print out these instructions ");
+                    System.out.println("-l or --lines before a file name will print the line count of a file");
+                    System.out.println("-w or --words before a file name will print the word count of a file");
+                    System.out.println("-c or --Characters before a file name will print the character count of a file");
+                    System.out.println("-s or --sourcelines before a file name will print the sourceline count of a file");
+                    System.out.println("-C or --commentlines before a file name will print the commentline count of a file");
+            //}else if(a[1].charAt(0)!='-') {
+              //  e = true;
+            //}
 
-            for(int i=1; i<inst-1;i++){
-                char c=a[i].charAt(0);
-                if(c=='-'){
-                    if(a[i].contains("l")){
-                        rets.set(0,true);
-                    }
-                    if(a[i].contains("w")){
-                        rets.set(1,true);
-                    }
-                    if(a[i].contains("c")){
-                        rets.set(2,true);
-                    }
-                }
-            }
-            if(e){
-                rets.set(0,true);
-                rets.set(1,true);
-                rets.set(2,true);
-            }
-        return rets;
+            //for(int i=1; i<inst-1;i++){
+              //  char c=a[i].charAt(0);
+                //if(c=='-'){
+                  //  if(a[i].contains("l")){
+                    //    rets.set(0,true);
+                    //}
+                    //f(a[i].contains("w")){
+                      //  rets.set(1,true);
+                    //}
+                    //if(a[i].contains("c")){
+                      //  rets.set(2,true);
+                    //}
+                //}
+            //}
+            //if(e){
+              //  rets.set(0,true);
+                //rets.set(1,true);
+                //rets.set(2,true);
+            //}
+        //return rets;
             }
 
 
