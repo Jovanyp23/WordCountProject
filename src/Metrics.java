@@ -1,7 +1,5 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -21,6 +19,8 @@ import java.util.ArrayList;
     @picocli.CommandLine.Parameters
             ArrayList<String> positional;
     public static void main(String [] args){
+        boolean headerYes=false;
+        boolean jc=false;
         int tic=0;
         String line=null;
         int charz=0;
@@ -48,18 +48,15 @@ import java.util.ArrayList;
                     FileReader reading = new FileReader(fileName);
                     BufferedReader buff = new BufferedReader(reading);
                     while ((line = buff.readLine()) != null) {
-                        //System.out.println(line); used this to test
+                        if(line.contains(".java")||line.contains(".c")||line.contains(".h")||line.contains(".cpp")||line.contains(".hpp")){
+                            jc=true;
+                        }
                         charz = charz + line.length();
                         wordz = wordz + line.split("\\s+").length;
-                        //System.out.println(line.split("\\s+").length);
                         count++;
                     }
                     buff.close();
-                } catch (FileNotFoundException e) {
-                    //if(!fileName.equals("wc")) {
-                        //System.out.println("Cannot open file"); might not even be needed
-                    //}
-                } catch (IOException e) {
+                } catch (Exception e) {
                     System.out.println("error reading file");
                 }
                 if(printer.get(0)) {
@@ -142,5 +139,27 @@ import java.util.ArrayList;
         return rets;
             }
 
-    }
+
+   public static void headerPrint(boolean a,boolean b, ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){
+        if(a&&b){
+            if(l!=null){
+                System.out.println("Lines   ");
+            }
+            if(w!=null){
+                System.out.println("Words  ");
+            }
+            if(c!=null){
+                System.out.println("Characters   ");
+            }
+            if(s!=null){
+                System.out.println("SourceLines   ");
+            }
+            if(cm!=null){
+                System.out.println("Comments   ");
+            }
+        }
+
+
+   }
+ }
 
