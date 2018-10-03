@@ -4,7 +4,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class wc {
+public class Metrics {
     public static void main(String [] args){
         int tic=0;
         String line=null;
