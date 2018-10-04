@@ -28,7 +28,7 @@ import java.util.ArrayList;
        //picocli features simply wont work without implementing runnable for whatever reason?
      }
     public static void main(String[] args){//fiddle with header printing
-        boolean headerYes=false;            //make sloc and com reader,
+        boolean headerYes=false;
         boolean jc=false;
         int tic=0;
         String line=null;
@@ -42,37 +42,61 @@ import java.util.ArrayList;
         int sourcetrack=0;
         int totComTrack=0;
         int totSourceTrack=0;
+        boolean multiComment=false;
         boolean wcParams=false;
         boolean wasRead=false;
         String fileName="";
         picocli.CommandLine.run(new Metrics(),System.err, args);
         ArrayList<String>allArgs=groupFiles(lines,words,characters,sourcelines,commentlines);
-        if (args.length==0) {//nothing in command line
+        if (args.length==0) {
             System.out.println("0 0 0 ");
         }
         else if(help!=null){
             instructions();
         } else if(help==null) {
-            for (int i = 0; i < allArgs.size(); i++) {//at least one thing in command line
+            for (int i = 0; i < allArgs.size(); i++) {
                 try {
 
-                    fileName = allArgs.get(tic);//this si where files are being switched
+                    fileName = allArgs.get(tic);
                     FileReader reading = new FileReader(fileName);
                     BufferedReader buff = new BufferedReader(reading);
                     while ((line = buff.readLine()) != null) {
                         if(line.contains(".java")||line.contains(".c")||line.contains(".h")||line.contains(".cpp")||line.contains(".hpp")){
                             jc=true;
                         }
-                        if(sourcelines!=null||commentlines!=null){
-                            headerYes=true;
+                        if(line.contains("//")||line.contains("/*")||line.contains("*/")||multiComment){
+                            comtrack++;
+                            if(line.contains("/*")) {
+                                multiComment = true;
+                            }
+                            if(line.contains("*/")) {
+                                multiComment = false;
+                            }
                         }
+                        if(!multiComment){
+                            if(line.contains("//")||line.contains("/*")){
+                                if(line.lastIndexOf("//")>=2||line.lastIndexOf("/*")>=2){
+                                    if(!line.equals(""))
+                                    sourcetrack++;
+                                }
+                            }else {
+                                sourcetrack++;
+                            }
+                            }
+
+
                         charz = charz + line.length();
                         wordz = wordz + line.split("\\s+").length;
-                        count++;
+                        if(!line.equals("")) {
+                            count++;
+                        }
                     }
                     buff.close();
                 } catch (Exception e) {
                     System.out.println("error reading file");
+                }
+                if(sourcelines!=null||commentlines!=null){
+                    headerYes=true;
                 }
                 headerPrint(headerYes,jc,lines,words,characters,sourcelines,commentlines);
                 if(positional!=null){
@@ -96,16 +120,16 @@ import java.util.ArrayList;
                         System.out.print(charz + "  ");
                     }
                 }
-                if(sourcelines!=null) {//placeholder for sourcelines counter
-                    if(charz!=0) {
+                if(sourcelines!=null) {
+                    if(sourcetrack!=0) {
                         wasRead=true;
-                        System.out.print(charz + "  ");
+                        System.out.print(sourcetrack + "  ");
                     }
                 }
-                if(commentlines!=null) {//placeholder for commentlines counter
-                    if(charz!=0) {
+                if(commentlines!=null) {
+                    if(comtrack!=0) {
                         wasRead=true;
-                        System.out.print(charz + "  ");
+                        System.out.print(comtrack + "  ");
                     }
                 }
                 if(wasRead) {
@@ -117,26 +141,30 @@ import java.util.ArrayList;
                 totchar = totchar + charz;
                 totcount = totcount + count;
                 totword = totword + wordz;
+                totComTrack=totComTrack+comtrack;
+                totSourceTrack=totSourceTrack+sourcetrack;
                 charz = 0;
                 count = 0;
                 wordz = 0;
+                sourcetrack=0;
+                comtrack=0;
                 tic++;
             }
         }
-        if(lines!=null) {
+        if(lines!=null||wcParams) {
             System.out.print(totcount + "  ");
         }
-        if(words!=null) {
+        if(words!=null||wcParams) {
             System.out.print(totword + "  ");
         }
-        if (characters!=null) {
+        if (characters!=null||wcParams) {
             System.out.print(totchar + "  ");
         }
-        if (sourcelines!=null) {//placeholder for tot sourcelines
-            System.out.print(totchar + "  ");
+        if (sourcelines!=null) {
+            System.out.print(totSourceTrack + "  ");
         }
-        if (commentlines!=null) {//placeholder for tot commentlines
-            System.out.print(totchar + "  ");
+        if (commentlines!=null) {
+            System.out.print(totComTrack + "  ");
         }
         if(wasRead&&allArgs.size()>1) {
             System.out.print("Total");
@@ -155,6 +183,7 @@ import java.util.ArrayList;
 
    public static void headerPrint(boolean a,boolean b, ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){//this is actually never called yet
         if(a&&b){
+            System.out.println("Is this thing on?");
             if(l!=null){
                 System.out.println("Lines   ");
             }
