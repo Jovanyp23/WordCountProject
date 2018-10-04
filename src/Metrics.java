@@ -3,10 +3,10 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 
- class Metrics {
-    @picocli.CommandLine.Option(names={"-l","--lines"})
-    static
-    ArrayList<String> lines;
+ public class Metrics implements Runnable {
+     @picocli.CommandLine.Option(names={"-l","--lines"})
+     static
+     ArrayList<String> lines;
      @picocli.CommandLine.Option(names={"-w","--words"})
      static
      ArrayList<String> words;
@@ -16,15 +16,18 @@ import java.util.ArrayList;
      @picocli.CommandLine.Option(names={"-s","--sourcelines"})
      static
      ArrayList<String> sourcelines;
-     @picocli.CommandLine.Option(names={"-C","--lines"})
+     @picocli.CommandLine.Option(names={"-C","--commentlines"})
      static
      ArrayList<String> commentlines;
      @picocli.CommandLine.Option(names={"-h","--help"})
      static
      ArrayList<String> help;
     @picocli.CommandLine.Parameters
-            ArrayList<String> positional;
-    public static void main(String [] args){//change instruction method to just print instructions, fill arrays with something if everything is printed
+    ArrayList<String> positional;
+     public void run() {
+       //picocli features simply wont work without implementing runnable for whatever reason?
+     }
+    public static void main(String[] args){//fill arrays with something if everything is printed; the only arrays that may need to be filled are lwc="everything"
         boolean headerYes=false;            //make sloc and com reader,keep tallies of sloc and com and their totals, change where the read lines are being put in from
         boolean jc=false;
         int tic=0;
@@ -36,15 +39,14 @@ import java.util.ArrayList;
         int totcount=0;
         int totword=0;
         boolean wasRead=false;
-        boolean everything=false;
-        ArrayList<Boolean> printer=new ArrayList<>();
         String fileName="";
-        int siz=args.length;
+        picocli.CommandLine.run(new Metrics(),System.err, args);
         if (args.length==0) {//nothing in command line
             System.out.println("0 0 0 ");
         }
         else if(help!=null){
-            //print out the instructions
+            System.out.println(help.isEmpty());
+            instructions();
         } else if(help==null) {
             for (int i = 0; i < args.length; i++) {//at least one thing in command line
                 try {
@@ -129,42 +131,14 @@ import java.util.ArrayList;
             System.out.print("Total");
         }
     }
-    public static void instructions(String[]a,int inst,boolean e){
-       // ArrayList<Boolean> rets=new ArrayList<>();
-        //rets.add(false);
-        //rets.add(false);
-        //rets.add(false);
-           // if(inst==1){
-                    System.out.println("-h or --help will print out these instructions ");
-                    System.out.println("-l or --lines before a file name will print the line count of a file");
-                    System.out.println("-w or --words before a file name will print the word count of a file");
-                    System.out.println("-c or --Characters before a file name will print the character count of a file");
-                    System.out.println("-s or --sourcelines before a file name will print the sourceline count of a file");
-                    System.out.println("-C or --commentlines before a file name will print the commentline count of a file");
-            //}else if(a[1].charAt(0)!='-') {
-              //  e = true;
-            //}
+    public static void instructions(){
+         System.out.println("-h or --help will print out these instructions ");
+         System.out.println("-l or --lines before a file name will print the line count of a file");
+         System.out.println("-w or --words before a file name will print the word count of a file");
+         System.out.println("-c or --Characters before a file name will print the character count of a file");
+         System.out.println("-s or --sourcelines before a file name will print the sourceline count of a file");
+         System.out.println("-C or --commentlines before a file name will print the commentline count of a file");
 
-            //for(int i=1; i<inst-1;i++){
-              //  char c=a[i].charAt(0);
-                //if(c=='-'){
-                  //  if(a[i].contains("l")){
-                    //    rets.set(0,true);
-                    //}
-                    //f(a[i].contains("w")){
-                      //  rets.set(1,true);
-                    //}
-                    //if(a[i].contains("c")){
-                      //  rets.set(2,true);
-                    //}
-                //}
-            //}
-            //if(e){
-              //  rets.set(0,true);
-                //rets.set(1,true);
-                //rets.set(2,true);
-            //}
-        //return rets;
             }
 
 
@@ -186,8 +160,6 @@ import java.util.ArrayList;
                 System.out.println("Comments   ");
             }
         }
-
-
    }
  }
 
