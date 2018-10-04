@@ -23,12 +23,12 @@ import java.util.ArrayList;
      static
      ArrayList<String> help;
     @picocli.CommandLine.Parameters
-    ArrayList<String> positional;
+    static ArrayList<String> positional;
      public void run() {
        //picocli features simply wont work without implementing runnable for whatever reason?
      }
-    public static void main(String[] args){//fill arrays with something if everything is printed; the only arrays that may need to be filled are lwc="everything"
-        boolean headerYes=false;            //make sloc and com reader,keep tallies of sloc and com and their totals, change where the read lines are being put in from
+    public static void main(String[] args){//fiddle with header printing
+        boolean headerYes=false;            //make sloc and com reader,
         boolean jc=false;
         int tic=0;
         String line=null;
@@ -38,25 +38,33 @@ import java.util.ArrayList;
         int totchar=0;
         int totcount=0;
         int totword=0;
+        int comtrack=0;
+        int sourcetrack=0;
+        int totComTrack=0;
+        int totSourceTrack=0;
+        boolean wcParams=false;
         boolean wasRead=false;
         String fileName="";
         picocli.CommandLine.run(new Metrics(),System.err, args);
+        ArrayList<String>allArgs=groupFiles(lines,words,characters,sourcelines,commentlines);
         if (args.length==0) {//nothing in command line
             System.out.println("0 0 0 ");
         }
         else if(help!=null){
-            System.out.println(help.isEmpty());
             instructions();
         } else if(help==null) {
-            for (int i = 0; i < args.length; i++) {//at least one thing in command line
+            for (int i = 0; i < allArgs.size(); i++) {//at least one thing in command line
                 try {
 
-                    fileName = args[tic];
+                    fileName = allArgs.get(tic);//this si where files are being switched
                     FileReader reading = new FileReader(fileName);
                     BufferedReader buff = new BufferedReader(reading);
                     while ((line = buff.readLine()) != null) {
                         if(line.contains(".java")||line.contains(".c")||line.contains(".h")||line.contains(".cpp")||line.contains(".hpp")){
                             jc=true;
+                        }
+                        if(sourcelines!=null||commentlines!=null){
+                            headerYes=true;
                         }
                         charz = charz + line.length();
                         wordz = wordz + line.split("\\s+").length;
@@ -67,19 +75,22 @@ import java.util.ArrayList;
                     System.out.println("error reading file");
                 }
                 headerPrint(headerYes,jc,lines,words,characters,sourcelines,commentlines);
-                if(lines!=null) {
+                if(positional!=null){
+                    wcParams=true;
+                }
+                if(lines!=null||wcParams) {
                     if (count != 0) {
                         wasRead=true;
                         System.out.print(count + "  ");
                     }
                 }
-                if(words!=null) {
+                if(words!=null||wcParams) {
                     if (wordz != 0) {
                         wasRead=true;
                         System.out.print(wordz + "  ");
                     }
                 }
-                if(characters!=null) {
+                if(characters!=null||wcParams) {
                     if(charz!=0) {
                         wasRead=true;
                         System.out.print(charz + "  ");
@@ -127,7 +138,7 @@ import java.util.ArrayList;
         if (commentlines!=null) {//placeholder for tot commentlines
             System.out.print(totchar + "  ");
         }
-        if(wasRead) {
+        if(wasRead&&allArgs.size()>1) {
             System.out.print("Total");
         }
     }
@@ -142,7 +153,7 @@ import java.util.ArrayList;
             }
 
 
-   public static void headerPrint(boolean a,boolean b, ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){
+   public static void headerPrint(boolean a,boolean b, ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){//this is actually never called yet
         if(a&&b){
             if(l!=null){
                 System.out.println("Lines   ");
@@ -161,5 +172,31 @@ import java.util.ArrayList;
             }
         }
    }
+   public static ArrayList<String> groupFiles(ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){
+         ArrayList<String> grouped = new ArrayList<>();
+         if (l!=null) {
+             grouped.addAll(l);
+         }
+        if (w!=null) {
+           grouped.addAll(w);
+        }
+        if (c!=null) {
+           grouped.addAll(c);
+        }
+        if (s!=null) {
+           grouped.addAll(s);
+        }
+        if (cm!=null) {
+           grouped.addAll(cm);
+        }
+       if (cm!=null) {
+           grouped.addAll(cm);
+       }
+       if (positional!=null) {
+           grouped.addAll(positional);
+       }
+      return grouped;
+     }
+
  }
 
