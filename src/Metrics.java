@@ -42,18 +42,43 @@ import java.util.ArrayList;
         int sourcetrack=0;
         int totComTrack=0;
         int totSourceTrack=0;
+        boolean linesbol=false;
+        boolean wordsbol=false;
+        boolean charbol=false;
+        boolean srcbol=false;
+        boolean combol=false;
         boolean multiComment=false;
         boolean wcParams=false;
         boolean wasRead=false;
         String fileName="";
         picocli.CommandLine.run(new Metrics(),System.err, args);
         ArrayList<String>allArgs=groupFiles(lines,words,characters,sourcelines,commentlines);
+        if(positional!=null){
+            wcParams=true;
+        }
+        if(lines!=null||wcParams){
+            linesbol=true;
+        }
+        if(words!=null||wcParams){
+            wordsbol=true;
+        }
+        if(characters!=null||wcParams){
+            charbol=true;
+        }
+        if(sourcelines!=null){
+            srcbol=true;
+        }
+        if(commentlines!=null){
+            combol=true;
+        }
         if (args.length==0) {
             System.out.println("0 0 0 ");
         }
         else if(help!=null){
             instructions();
-        } else if(help==null) {
+        }
+        headerPrint(linesbol,wordsbol,charbol,srcbol,combol);
+        if(help==null) {
             for (int i = 0; i < allArgs.size(); i++) {
                 try {
 
@@ -98,38 +123,37 @@ import java.util.ArrayList;
                 if(sourcelines!=null||commentlines!=null){
                     headerYes=true;
                 }
-                headerPrint(headerYes,jc,lines,words,characters,sourcelines,commentlines);
                 if(positional!=null){
                     wcParams=true;
                 }
                 if(lines!=null||wcParams) {
                     if (count != 0) {
                         wasRead=true;
-                        System.out.print(count + "  ");
+                        System.out.print(count + "      ");
                     }
                 }
                 if(words!=null||wcParams) {
                     if (wordz != 0) {
                         wasRead=true;
-                        System.out.print(wordz + "  ");
+                        System.out.print(wordz + "      ");
                     }
                 }
                 if(characters!=null||wcParams) {
                     if(charz!=0) {
                         wasRead=true;
-                        System.out.print(charz + "  ");
+                        System.out.print(charz + "         ");
                     }
                 }
                 if(sourcelines!=null) {
                     if(sourcetrack!=0) {
                         wasRead=true;
-                        System.out.print(sourcetrack + "  ");
+                        System.out.print(sourcetrack + "             ");
                     }
                 }
                 if(commentlines!=null) {
                     if(comtrack!=0) {
                         wasRead=true;
-                        System.out.print(comtrack + "  ");
+                        System.out.print(comtrack + "        ");
                     }
                 }
                 if(wasRead) {
@@ -152,21 +176,21 @@ import java.util.ArrayList;
             }
         }
         if(lines!=null||wcParams) {
-            System.out.print(totcount + "  ");
+            System.out.print(totcount + "      ");
         }
         if(words!=null||wcParams) {
-            System.out.print(totword + "  ");
+            System.out.print(totword + "     ");
         }
         if (characters!=null||wcParams) {
-            System.out.print(totchar + "  ");
+            System.out.print(totchar + "        ");
         }
         if (sourcelines!=null) {
-            System.out.print(totSourceTrack + "  ");
+            System.out.print(totSourceTrack + "           ");
         }
         if (commentlines!=null) {
-            System.out.print(totComTrack + "  ");
+            System.out.print(totComTrack + "       ");
         }
-        if(wasRead&&allArgs.size()>1) {
+        if(wasRead&&allArgs.size()>=1) {
             System.out.print("Total");
         }
     }
@@ -181,50 +205,47 @@ import java.util.ArrayList;
             }
 
 
-   public static void headerPrint(boolean a,boolean b, ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){//this is actually never called yet
-        if(a&&b){
-            System.out.println("Is this thing on?");
-            if(l!=null){
-                System.out.println("Lines   ");
+   public static void headerPrint(boolean l, boolean w, boolean c, boolean s, boolean cm){//this is actually never called yet
+         if(s||cm) {
+             if (l) {
+                 System.out.print("Lines   ");
+             }
+             if (w) {
+                 System.out.print("Words  ");
+             }
+             if (c) {
+                 System.out.print("Characters   ");
+             }
+         }
+            if(s){
+                System.out.print("SourceLines   ");
+                if(!cm){
+                    System.out.println("");
+                }
             }
-            if(w!=null){
-                System.out.println("Words  ");
-            }
-            if(c!=null){
-                System.out.println("Characters   ");
-            }
-            if(s!=null){
-                System.out.println("SourceLines   ");
-            }
-            if(cm!=null){
-                System.out.println("Comments   ");
-            }
+            if(cm){
+                System.out.print("Comments   ");
+                System.out.println("");
+
         }
    }
    public static ArrayList<String> groupFiles(ArrayList<String> l,ArrayList<String> w,ArrayList<String> c,ArrayList<String> s,ArrayList<String> cm){
-         ArrayList<String> grouped = new ArrayList<>();
          if (l!=null) {
-             grouped.addAll(l);
+             positional.addAll(l);
          }
         if (w!=null) {
-           grouped.addAll(w);
+           positional.addAll(w);
         }
         if (c!=null) {
-           grouped.addAll(c);
+           positional.addAll(c);
         }
         if (s!=null) {
-           grouped.addAll(s);
+           positional.addAll(s);
         }
         if (cm!=null) {
-           grouped.addAll(cm);
+           positional.addAll(cm);
         }
-       if (cm!=null) {
-           grouped.addAll(cm);
-       }
-       if (positional!=null) {
-           grouped.addAll(positional);
-       }
-      return grouped;
+      return positional;
      }
 
  }
